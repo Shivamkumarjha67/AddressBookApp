@@ -1,5 +1,6 @@
 package com.bridgelabz.addressbook.Container;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,27 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.addressbook.DTO.ContactDTO;
-import com.bridgelabz.addressbook.Model.Contact;
 import com.bridgelabz.addressbook.Service.AddressBookAppService;
 
 @RestController
 @RequestMapping("/contact")
 public class AddressBookController {
-	// Used the autowired annotation for the dependency injection
+	// Used the Autowired annotation for the dependency injection
 	@Autowired
 	private AddressBookAppService addressBookAppService;
 	
+	List<ContactDTO> allContactsContactDTOs = new ArrayList<>();
+	
 	@PostMapping("/add")
 	public ResponseEntity<String> getContactSaved(@RequestBody ContactDTO contact) {
-	    System.out.println("Received Contact:");
-	    System.out.println("First Name: " + contact.getFirstName());
-	    System.out.println("Last Name: " + contact.getLastName());
-	    System.out.println("Address: " + contact.getAddress());
-	    System.out.println("Email: " + contact.getEmail());
-	    System.out.println("Notes: " + contact.getNotes());
-	    
 	    try {
 	    	 addressBookAppService.saveContact(contact);
+	    	 allContactsContactDTOs.add(contact);
 	    	 return ResponseEntity.status(HttpStatus.CREATED).body("Contact created.");
 	    } catch (Exception e) {
 	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("some error occured!");
@@ -49,24 +45,41 @@ public class AddressBookController {
 	}
 	
 	@GetMapping("/get/{id}")
-	public ResponseEntity<Contact> getById(@PathVariable int id) {
+	public ResponseEntity<ContactDTO> getById(@PathVariable int id) {
 		try {
-			Contact contact = addressBookAppService.getById(id);
-			return ResponseEntity.ok(contact);
+			ContactDTO contactDTO = addressBookAppService.getById(id);
+			return ResponseEntity.ok(contactDTO);
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Contact> updateById(@PathVariable int id, @RequestBody Contact contact) {
-		Contact updatedContact = addressBookAppService.updateById(id, contact);
-		return ResponseEntity.ok(updatedContact);
+	public ResponseEntity<String> updateById(@PathVariable int id, @RequestBody ContactDTO contactDTO) {
+		try {
+			String message = addressBookAppService.updateById(id, contactDTO); 
+			
+			for(int i=0; i<allContactsContactDTOs.size(); i++) {
+				if(allContactsContactDTOs.get(i).getId() == id) {
+					allContactsContactDTOs.set(i, contactDTO);
+				}
+			}
+			
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(message);
+		} catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 	
 	@DeleteMapping("/delete/{id}") 
 	public ResponseEntity<String> deleteById(@PathVariable int id) {
 		try {
+			for(int i=0; i<allContactsContactDTOs.size(); i++) {
+				if(allContactsContactDTOs.get(i).getId() == id) {
+					allContactsContactDTOs.remove(i);
+				}
+			}
+			
 			return ResponseEntity.ok(addressBookAppService.deleteById(id));
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

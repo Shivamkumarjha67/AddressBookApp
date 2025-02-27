@@ -45,20 +45,17 @@ public class AddressBookAppService {
 		return contactDTOs;
 	}
 
-	public Contact getById(int id) {
-		return addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact id not found!"));
-	}
-
-	public Contact updateById(int id, Contact contact) {
-		return addressRepository.findById(id).map(existingContact -> {
-			existingContact.setFirstName(contact.getFirstName());
-			existingContact.setLastName(contact.getLastName());
-			existingContact.setEmail(contact.getEmail());
-			existingContact.setAddress(contact.getAddress());
-			existingContact.setNotes(contact.getNotes());
-			
-			return addressRepository.save(existingContact);
-		}).orElseThrow(() -> new RuntimeException("Given contact id not found!"));
+	public ContactDTO getById(int id) {
+		Contact contact =  addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact id not found!"));
+		
+		ContactDTO contactDTO = new ContactDTO();
+		contactDTO.setAddress(contact.getAddress());
+		contactDTO.setEmail(contact.getEmail());
+		contactDTO.setFirstName(contact.getFirstName());
+		contactDTO.setLastName(contact.getLastName());
+		contactDTO.setNotes(contact.getNotes());
+		
+		return contactDTO;
 	}
 
 	public String deleteById(int id) {
@@ -68,5 +65,18 @@ public class AddressBookAppService {
 		} 
 		
 		throw new RuntimeException("Contact not found");
+	}
+
+	public String updateById(int id, ContactDTO contactDTO) {
+		Contact existingContact = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Given contact id not found!"));
+		
+		existingContact.setFirstName(contactDTO.getFirstName());
+		existingContact.setLastName(contactDTO.getLastName());
+		existingContact.setEmail(contactDTO.getEmail());
+		existingContact.setAddress(contactDTO.getAddress());
+		existingContact.setNotes(contactDTO.getNotes());
+		
+		addressRepository.save(existingContact);
+		return "Updated successfully...";
 	}
 }
