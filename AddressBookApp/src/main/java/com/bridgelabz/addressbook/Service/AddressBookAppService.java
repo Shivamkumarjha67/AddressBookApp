@@ -1,5 +1,6 @@
 package com.bridgelabz.addressbook.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,23 @@ public class AddressBookAppService {
 		addressRepository.save(contact);
 	}
 
-	public List<Contact> getAllContacts() {
-		return addressRepository.findAll();
+	public List<ContactDTO> getAllContacts() {
+		List<Contact> contacts =  addressRepository.findAll();
+		
+		List<ContactDTO> contactDTOs  = new ArrayList<>();
+		for(Contact contact : contacts) {
+			ContactDTO contactDTO = new ContactDTO();
+			
+			contactDTO.setFirstName(contact.getFirstName());
+			contactDTO.setLastName(contact.getLastName());
+			contactDTO.setAddress(contact.getAddress());
+			contactDTO.setEmail(contact.getEmail());
+			contactDTO.setNotes(contact.getNotes());
+			
+			contactDTOs.add(contactDTO);
+		}
+		
+		return contactDTOs;
 	}
 
 	public Contact getById(int id) {

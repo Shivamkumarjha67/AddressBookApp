@@ -14,17 +14,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bridgelabz.addressbook.DTO.ContactDTO;
 import com.bridgelabz.addressbook.Model.Contact;
 import com.bridgelabz.addressbook.Service.AddressBookAppService;
 
 @RestController
 @RequestMapping("/contact")
 public class AddressBookController {
+	// Used the autowired annotation for the dependency injection
 	@Autowired
 	private AddressBookAppService addressBookAppService;
 	
 	@PostMapping("/add")
-	public ResponseEntity<Contact> getContactSaved(@RequestBody Contact contact) {
+	public ResponseEntity<String> getContactSaved(@RequestBody ContactDTO contact) {
 	    System.out.println("Received Contact:");
 	    System.out.println("First Name: " + contact.getFirstName());
 	    System.out.println("Last Name: " + contact.getLastName());
@@ -32,13 +34,17 @@ public class AddressBookController {
 	    System.out.println("Email: " + contact.getEmail());
 	    System.out.println("Notes: " + contact.getNotes());
 	    
-	    Contact savedContact = addressBookAppService.saveContact(contact);
-	    return ResponseEntity.ok(savedContact);
+	    try {
+	    	 addressBookAppService.saveContact(contact);
+	    	 return ResponseEntity.status(HttpStatus.CREATED).body("Contact created.");
+	    } catch (Exception e) {
+	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("some error occured!");
+	    }
 	}
 	
 	@GetMapping("/getAll")
-	public ResponseEntity<List<Contact>> getAllContacts() {
-		List<Contact> contacts = addressBookAppService.getAllContacts();
+	public ResponseEntity<List<ContactDTO>> getAllContacts() {
+		List<ContactDTO> contacts = addressBookAppService.getAllContacts();
 		return ResponseEntity.ok(contacts);
 	}
 	
