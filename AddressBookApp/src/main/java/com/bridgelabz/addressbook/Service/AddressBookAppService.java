@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bridgelabz.addressbook.DTO.ContactDTO;
 import com.bridgelabz.addressbook.Model.Contact;
 import com.bridgelabz.addressbook.Repository.AddressRepository;
 
@@ -13,8 +14,15 @@ public class AddressBookAppService {
 	@Autowired
 	private AddressRepository addressRepository;
 	
-	public Contact saveContact(Contact contact) {
-		return addressRepository.save(contact);
+	public void saveContact(ContactDTO contactDTO) {
+		Contact contact = new Contact();
+		contact.setFirstName(contactDTO.getFirstName());
+		contact.setLastName(contactDTO.getLastName());
+		contact.setEmail(contactDTO.getEmail());
+		contact.setAddress(contactDTO.getAddress());
+		contact.setNotes(contactDTO.getNotes());
+		
+		addressRepository.save(contact);
 	}
 
 	public List<Contact> getAllContacts() {
@@ -43,6 +51,6 @@ public class AddressBookAppService {
 			return "Contact deleted successfully!";
 		} 
 		
-		return "Contact with given id doesn't exists.";
+		throw new RuntimeException("Contact not found");
 	}
 }
