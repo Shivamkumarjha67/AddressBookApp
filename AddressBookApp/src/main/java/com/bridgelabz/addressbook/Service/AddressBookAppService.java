@@ -10,7 +10,10 @@ import com.bridgelabz.addressbook.DTO.ContactDTO;
 import com.bridgelabz.addressbook.Model.Contact;
 import com.bridgelabz.addressbook.Repository.AddressRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AddressBookAppService {
 	@Autowired
 	private AddressRepository addressRepository;
@@ -23,12 +26,15 @@ public class AddressBookAppService {
 		contact.setAddress(contactDTO.getAddress());
 		contact.setNotes(contactDTO.getNotes());
 		
+		log.info("Contact is added to address book, for {} {}.", contactDTO.getFirstName(), contactDTO.getLastName());
+		
 		addressRepository.save(contact);
 	}
 
 	public List<ContactDTO> getAllContacts() {
 		List<Contact> contacts =  addressRepository.findAll();
 		
+		log.info("Name of people whose details are saved in the address book are: ");
 		List<ContactDTO> contactDTOs  = new ArrayList<>();
 		for(Contact contact : contacts) {
 			ContactDTO contactDTO = new ContactDTO();
@@ -38,6 +44,8 @@ public class AddressBookAppService {
 			contactDTO.setAddress(contact.getAddress());
 			contactDTO.setEmail(contact.getEmail());
 			contactDTO.setNotes(contact.getNotes());
+			
+			log.info("Name is : {}.", contact.getFirstName());
 			
 			contactDTOs.add(contactDTO);
 		}
@@ -54,6 +62,8 @@ public class AddressBookAppService {
 		contactDTO.setFirstName(contact.getFirstName());
 		contactDTO.setLastName(contact.getLastName());
 		contactDTO.setNotes(contact.getNotes());
+		
+		log.info("Name of people in {} id is {}.", id, contact.getFirstName());
 		
 		return contactDTO;
 	}
