@@ -3,6 +3,7 @@ package com.bridgelabz.addressbook.DTO;
 import lombok.Getter;
 import lombok.Setter;
 
+// Added the getter and setter in DTO using Lombok library
 @Getter
 @Setter
 public class ContactDTO {
