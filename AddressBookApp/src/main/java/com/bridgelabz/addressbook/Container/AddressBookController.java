@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.addressbook.DTO.ContactDTO;
 import com.bridgelabz.addressbook.Service.AddressBookAppService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/contact")
 public class AddressBookController {
@@ -28,7 +30,7 @@ public class AddressBookController {
 	List<ContactDTO> allContactsContactDTOs = new ArrayList<>();
 	
 	@PostMapping("/add")
-	public ResponseEntity<String> getContactSaved(@RequestBody ContactDTO contact) {
+	public ResponseEntity<String> getContactSaved(@Valid @RequestBody ContactDTO contact) {
 	    try {
 	    	 addressBookAppService.saveContact(contact);
 	    	 allContactsContactDTOs.add(contact);
@@ -55,7 +57,7 @@ public class AddressBookController {
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<String> updateById(@PathVariable int id, @RequestBody ContactDTO contactDTO) {
+	public ResponseEntity<String> updateById(@PathVariable int id, @Valid @RequestBody ContactDTO contactDTO) {
 		try {
 			String message = addressBookAppService.updateById(id, contactDTO); 
 			
