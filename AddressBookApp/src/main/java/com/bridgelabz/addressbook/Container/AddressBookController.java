@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.addressbook.DTO.ContactDTO;
+import com.bridgelabz.addressbook.Exception.AddressBookIdNotFoundException;
 import com.bridgelabz.addressbook.Service.AddressBookAppService;
 
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class AddressBookController {
 		try {
 			ContactDTO contactDTO = addressBookAppService.getById(id);
 			return ResponseEntity.ok(contactDTO);
-		} catch (RuntimeException e) {
+		} catch (AddressBookIdNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 	}

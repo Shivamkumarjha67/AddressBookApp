@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.addressbook.DTO.ContactDTO;
+import com.bridgelabz.addressbook.Exception.AddressBookIdNotFoundException;
 import com.bridgelabz.addressbook.Model.Contact;
 import com.bridgelabz.addressbook.Repository.AddressRepository;
 
@@ -53,9 +54,9 @@ public class AddressBookAppService {
 		return contactDTOs;
 	}
 
-	public ContactDTO getById(int id) {
-		Contact contact =  addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact id not found!"));
-		
+	public ContactDTO getById(int id) throws AddressBookIdNotFoundException {
+		Contact contact =  addressRepository.findById(id).orElseThrow(() -> new AddressBookIdNotFoundException("Id not found!"));
+				
 		ContactDTO contactDTO = new ContactDTO();
 		contactDTO.setAddress(contact.getAddress());
 		contactDTO.setEmail(contact.getEmail());

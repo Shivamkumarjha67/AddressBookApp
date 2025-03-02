@@ -19,4 +19,11 @@ public class CustomExceptionHandlerClass {
         );
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+	
+	@ExceptionHandler(AddressBookIdNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAddressBookNotFoundException(AddressBookIdNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }
